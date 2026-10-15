@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools==75.1.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synapic-inference"
+version = "0.1.0"
+description = "Small HTTP inference sidecar for Synapic image workflows"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "fastapi==0.115.0",
+  "Pillow==10.4.0",
+  "python-multipart==0.0.12",
+  "transformers==4.45.2",
+  "torch==2.4.1+cpu",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src/Synapic.Inference"]
+testpaths = ["tests"]
