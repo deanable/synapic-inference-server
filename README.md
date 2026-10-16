@@ -80,6 +80,18 @@ docker build -t synapic-inference:local .
 docker run --rm -p 8080:8080 --env-file .env synapic-inference:local
 ```
 
+## GitHub Windows build
+
+Every push runs [`.github/workflows/windows-build.yml`](.github/workflows/windows-build.yml)
+on a pinned Windows runner. The workflow installs the locked dependencies, runs
+the tests, builds the single-file `synapic-inference.exe` with PyInstaller,
+smoke-tests its `/health` endpoint, and packages it with Inno Setup.
+
+The executable and `synapic-inference-installer.exe` are uploaded as a GitHub
+Actions artifact named `synapic-inference-windows-<commit-sha>`. The installer
+also includes `.env.example` and this README and creates a Start Menu shortcut;
+it does not launch the server automatically.
+
 ## Configuration
 
 See `.env.example`. `SYNAPIC_DEVICE=cpu` is the portable default. Set
