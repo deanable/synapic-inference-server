@@ -41,6 +41,29 @@ from that caption. `POST /upscale` is intentionally reported as unavailable
 until a compatible Swin2SR model is configured; this avoids silently returning
 the original image as a false upscale result.
 
+### Inference queue
+
+`/tag` uses a bounded in-process queue. Synchronous model calls run in worker
+threads, so they do not block the FastAPI event loop. The default configuration
+has one worker and room for 16 waiting jobs. When the waiting queue is full,
+new `/tag` requests receive `429 Too Many Requests` immediately. Requests that
+are already queued wait for a worker and receive the same response shape as a
+direct inference request. During application shutdown, queued work receives
+`503 Service Unavailable`.
+
+Configure the queue with:
+
+```sh
+SYNAPIC_QUEUE_CAPACITY=16
+SYNAPIC_WORKER_COUNT=1
+```
+
+`SYNAPIC_WORKER_COUNT` controls concurrent model calls per process. Keep it at
+`1` for GPU-backed models unless the model and device have been tested for
+thread safety. Increasing it can improve CPU throughput but increases memory
+use. Multiple Uvicorn processes each have their own queue and model instance;
+they do not share capacity.
+
 ## Test and build
 
 ```sh
